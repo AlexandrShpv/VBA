@@ -6,16 +6,20 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     
     Application.ScreenUpdating = False
     
-    Dim filterArray, c As Variant
-    Dim filterArrayCount As Long
-    Dim lcol As String
-    Dim showFlag As Integer
+    'Filter Array
+    Dim fA, c As Variant
+    'Filter Array Counter
+    Dim fAC As Long
+    'Last head range column (also hidden)
+    Dim lC As String
+    ' Flag to remain column visible
+    Dim sF As Integer
     
-    filterArray = Split(Cells(1, 1).Value, ", ")
+    fA = Split(Cells(1, 1).Value, ", ")
     
         Dim filterRange As Range
-        lcol = Rows(1).Find(What:="*", SearchDirection:=xlPrevious).Address
-        Set filterRange = Range("B1:" & lcol)
+        lC = Rows(1).Find(What:="*", SearchDirection:=xlPrevious).Address
+        Set filterRange = Range("B1:" & lC)
         
         If Target.Value = "" Then
             For Each c In filterRange
@@ -23,19 +27,19 @@ Private Sub Worksheet_Change(ByVal Target As Range)
             Next c
         Else
             For Each c In filterRange
-                showFlag = 0
-                For filterArrayCount = 0 To UBound(filterArray)
-                    If Left(filterArray(filterArrayCount), 1) <> "-" Then
-                        If InStr(UCase(c.Value), UCase(filterArray(filterArrayCount))) > 0 Then
-                            showFlag = showFlag + 1
+                sF = 0
+                For fAC = 0 To UBound(fA)
+                    If Left(fA(fAC), 1) <> "-" Then
+                        If InStr(UCase(c.Value), UCase(fA(fAC))) > 0 Then
+                            sF = sF + 1
                         End If
                     Else
-                        If InStr(UCase(c.Value), UCase(Right(filterArray(filterArrayCount), Len(filterArray(filterArrayCount)) - 1))) > 0 Then
-                            showFlag = 0
+                        If InStr(UCase(c.Value), UCase(Right(fA(fAC), Len(fA(fAC)) - 1))) > 0 Then
+                            sF = 0
                         End If
                     End If
-                Next filterArrayCount
-                If showFlag > 0 Then
+                Next fAC
+                If sF > 0 Then
                     ActiveSheet.Range(c.Address).EntireColumn.Hidden = False
                 Else
                     ActiveSheet.Range(c.Address).EntireColumn.Hidden = True
