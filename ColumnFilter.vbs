@@ -49,6 +49,7 @@ Private Sub Worksheet_Change(ByVal Target As Range)
         
         
         Application.ScreenUpdating = True
+        ActiveWindow.ScrollColumn = 1
         
     End If
 
